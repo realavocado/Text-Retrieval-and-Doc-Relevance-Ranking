@@ -3,20 +3,21 @@ import numpy as np
 import nltk
 import pandas as pd
 from nltk.corpus import stopwords
+import math
 
 
 class TextRetrieval():
-    #For preprocessing
+    # For preprocessing
     punctuations = ""
     stop_words = set()
 
-    #For VSM definition
+    # For VSM definition
     vocab = np.zeros(200)
     dataset = None
 
     def __init__(self):
         ##
-        #TODO: obtain the file "https://raw.githubusercontent.com/mhjabreel/CharCnn_Keras/master/data/ag_news_csv/test.csv"
+        # TODO: obtain the file "https://raw.githubusercontent.com/mhjabreel/CharCnn_Keras/master/data/ag_news_csv/test.csv"
         # and store it locally in a location accessible directly by this script (e.g. same directory don't use absolute paths)
 
         ### TODO: Initialize punctuations (a string) and stop_words (a set)
@@ -39,29 +40,29 @@ class TextRetrieval():
         # dataset.head()
         for index, row in dataset.iterrows():
             line = row[2]
-            #TODO: Implement removing stopwords and punctuation
+            # TODO: Implement removing stopwords and punctuation
 
-            # 1. 移除首尾空格并转换为小写
+            # 1. transform words to lower-case, remove leading and trailing spaces
             line = line.strip().lower()
-            # 2. 移除标点符号和数字
+            # 2. remove punctuation and numbers
             line = ''.join([char if char not in punctuations and not char.isdigit() else ' ' for char in line])
             # 3 split words and remove stop words
             words = line.split()
             words = [word for word in words if word not in self.stop_words]
-            # 4. 将处理后的单词重新拼接为字符串
+            # 4. join words
             processed_line = ' '.join(words)
-            # 5. 保存处理后的行
+            # 5. save processed words in dataset
             dataset.at[index, 2] = processed_line
 
-        self.dataset = dataset  #Set dataset as object attribute
+        self.dataset = dataset  # Set dataset as object attribute
 
     #### Bit Vector with Dot Product
 
-    def build_vocabulary(self):  #,collection):
+    def build_vocabulary(self):  # ,collection):
         ### Return an array of 200 most frequent works in the collection
         ### dataset has to be read before calling the vocabulary construction
 
-        #TODO: Create a vocabulary. Assume self.dataset has been preprocessed. Count the ocurrance of the words in the dataset. Select the 200 most common words as your vocabulary vocab.
+        # TODO: Create a vocabulary. Assume self.dataset has been preprocessed. Count the ocurrance of the words in the dataset. Select the 200 most common words as your vocabulary vocab.
         word_count = {}
 
         # record the frequency of each word
@@ -87,9 +88,8 @@ class TextRetrieval():
     def text2BitVector(self, text):
         ### return the bit vector representation of the text
 
-        #TODO: Use self.vocab (assume self.vocab is created already) to transform the content of text into a bitVector
-        #Use the order in the vocabulary to match the order in the bitVector
-        # 创建一个与词汇表等长的位向量，初始值全为0
+        # TODO: Use self.vocab (assume self.vocab is created already) to transform the content of text into a bitVector
+        # Use the order in the vocabulary to match the order in the bitVector
         text_words = set(text.split())
         bitVector = np.array([1 if word in text_words else 0 for word in self.vocab])
         return bitVector
@@ -99,16 +99,16 @@ class TextRetrieval():
         q = self.text2BitVector(query)
         d = self.text2BitVector(doc)
 
-        #TODO: compute the relevance using q and d
+        # TODO: compute the relevance using q and d
         relevance = np.dot(q, d)
         return relevance
 
     def adapt_vocab_query(self, query):
         ### Updates the vocabulary to add the words in the query
 
-        #TODO: Use self.vocab and check whether the words in query are included in the vocabulary
-        #If a word is not present, add it to the vocabulary (new size of vocabulary = original + #of words not in the vocabulary)
-        #you can use a local variable vocab to work your changes and then update self.vocab
+        # TODO: Use self.vocab and check whether the words in query are included in the vocabulary
+        # If a word is not present, add it to the vocabulary (new size of vocabulary = original + #of words not in the vocabulary)
+        # you can use a local variable vocab to work your changes and then update self.vocab
         query_words = set(query.split())
         missing_words = [word for word in query_words if word not in self.vocab]
 
@@ -119,15 +119,15 @@ class TextRetrieval():
     def execute_search_BitVec(self, query):
         ### executes the computation of the relevance score for each document
         ### but first it verifies the query words are in the vocabulary
-        #e.g.: query = "olympic gold athens"
+        # e.g.: query = "olympic gold athens"
 
-        self.adapt_vocab_query(query)  #Ensure query is part of the "common language" of documents and query
+        self.adapt_vocab_query(query)  # Ensure query is part of the "common language" of documents and query
 
-        relevances = np.zeros(self.dataset.shape[0])  #Initialize relevances of all documents to 0
+        relevances = np.zeros(self.dataset.shape[0])  # Initialize relevances of all documents to 0
 
-        #TODO: Use self.vocab to compute the relevance/ranking score of each document in the dataset using bit_vector_score
+        # TODO: Use self.vocab to compute the relevance/ranking score of each document in the dataset using bit_vector_score
         for index, row in self.dataset.iterrows():
-            doc = row[2]  # 假定第三列是文档内容
+            doc = row[2]
             relevances[index] = self.bit_vector_score(query, doc)
 
         return relevances  # in the same order of the documents in the dataset
@@ -137,60 +137,57 @@ class TextRetrieval():
     def compute_IDF(self, M, collection):
         ### M number of documents in the collection; collection: documents (i.e., column 3 (index 2) in the dataset)
 
-        #To solve this question you should use self.vocab
+        # To solve this question you should use self.vocab
 
-        self.IDF = np.zeros(len(self.vocab))  #Initialize the IDFs to zero
-        #TODO: for word in vocab: Compute the IDF frequency of each word in the vocabulary
+        self.IDF = np.zeros(len(self.vocab))  # Initialize the IDFs to zero
+        # TODO: for word in vocab: Compute the IDF frequency of each word in the vocabulary
 
-        # 使用self.vocab计算每个单词的IDF频率
-        import math
-        word_doc_count = {word: 0 for word in self.vocab}
-
-        for doc in collection:
-            words = set(doc.split())
-            for word in words:
-                if word in word_doc_count:
-                    word_doc_count[word] += 1
-
-        # 计算IDF值
-        self.IDF = np.array([math.log(M / word_doc_count[word]) if word_doc_count[word] else 0 for word in self.vocab])
+        for i, word in enumerate(self.vocab):
+            # compute the doc freq containing word 计算包含该词的文档数 k
+            doc_freq = sum(1 for doc in collection if word in doc.split())
+            # avoid division error in case doc_freq is 0    避免 doc_freq 为 0，防止除零错误
+            if doc_freq > 0:
+                self.IDF[i] = math.log((M + 1) / doc_freq)
+            else:
+                self.IDF[i] = 0
 
     def text2TFIDF(self, text, applyBM25_and_IDF=False):
         ### returns the bit vector representation of the text
-        word_count = {word: text.split().count(word) for word in self.vocab}
-        tfidfVector = np.array([word_count[word] for word in self.vocab])
+        # TODO: Use self.vocab and self.IDF to compute the TF-IDF representation of the text
+        k = 1.5
+        tfidfVector = np.zeros(len(self.vocab))
 
-        if applyBM25_and_IDF:
-            k = 1.5  # BM25常数k
-            b = 0.75  # BM25常数b
-            avgdl = sum(len(doc.split()) for doc in self.dataset[2]) / len(self.dataset)  # 平均文档长度
-            dl = len(text.split())  # 当前文档长度
-            # 应用BM25和IDF调整
-            tfidfVector = np.array([(word_count[word] * (k + 1) / (word_count[word] + k * (1 - b + b * dl / avgdl))) *
-                                    self.IDF[i] if word_count[word] else 0 for i, word in enumerate(self.vocab)])
+        for i, word in enumerate(self.vocab):
+            if word in text.split():
+                # TODO: Set the value of TF-IDF to be (temporarily) equal to the word count of word in the text
+                term_freq = text.split().count(word)
+                tfidfVector[i] = term_freq
+                if applyBM25_and_IDF:
+                    # TODO: update the value of the tfidfVector entry to be equal to BM-25 (of the word in the document) multiplied times the IDF of the word
+                    tfidfVector[i] = self.IDF[i] * (k + 1) * term_freq / (term_freq + k)
 
         return tfidfVector
 
-    #grade (enter your code in this cell - DO NOT DELETE THIS LINE)
+    # grade (enter your code in this cell - DO NOT DELETE THIS LINE)
     def tfidf_score(self, query, doc, applyBM25_and_IDF=False):
         q = self.text2TFIDF(query)
-        d = self.text2TFIDF(doc, applyBM25_and_IDF)
+        d = self.text2TFIDF(doc, applyBM25_and_IDF=True)
 
-        #TODO: compute the relevance using q and d
+        # TODO: compute the relevance using q and d
         relevance = np.dot(q, d)
         return relevance
 
     def execute_search_TF_IDF(self, query):
-        #DIFF: Compute IDF
-        self.adapt_vocab_query(query)  #Ensure query is part of the "common language" of documents and query
+        # DIFF: Compute IDF
+        self.adapt_vocab_query(query)  # Ensure query is part of the "common language" of documents and query
         # global IDF
         self.compute_IDF(self.dataset.shape[0], self.dataset[
-            2])  #IDF is needed for TF-IDF and can be precomputed for all words in the vocabulary and a given fixed collection (this excercise)
+            2])  # IDF is needed for TF-IDF and can be precomputed for all words in the vocabulary and a given fixed collection (this excercise)
 
-        #For this function, you can use self.IDF and self.dataset
-        relevances = np.zeros(self.dataset.shape[0])  #Initialize relevances of all documents to 0
+        # For this function, you can use self.IDF and self.dataset
+        relevances = np.zeros(self.dataset.shape[0])  # Initialize relevances of all documents to 0
 
-        #TODO: Use self.vocab to compute the relevance/ranking score of each document in the dataset using tfidf_score
+        # TODO: Use self.vocab to compute the relevance/ranking score of each document in the dataset using tfidf_score
         for index, row in self.dataset.iterrows():
             doc = row[2]  # 假定第三列是文档内容
             relevances[index] = self.tfidf_score(query, doc, True)
@@ -200,19 +197,19 @@ class TextRetrieval():
 
 if __name__ == '__main__':
     tr = TextRetrieval()
-    tr.read_and_preprocess_Data_File()  #builds the collection
-    tr.build_vocabulary()  #builds an initial vocabulary based on common words
+    tr.read_and_preprocess_Data_File()  # builds the collection
+    tr.build_vocabulary()  # builds an initial vocabulary based on common words
     queries = ["olympic gold athens", "reuters stocks friday", "investment market prices"]
     print("#########\n")
     print("Results for BitVector")
     for query in queries:
         print("QUERY:", query)
         relevance_docs = tr.execute_search_BitVec(query)
-        #TODO: Once the relevances are computed, print the top 5 most relevant documents and the bottom 5 least relevant (for your reference)
+        # TODO: Once the relevances are computed, print the top 5 most relevant documents and the bottom 5 least relevant (for your reference)
 
     print("#########\n")
     print("Results for TF-IDF")
     for query in queries:
         print("QUERY:", query)
         relevance_docs = tr.execute_search_TF_IDF(query)
-        #TODO: Once the relevances are computed, print the top 5 most relevant documents and the bottom 5 least relevant (for your reference)
+        # TODO: Once the relevances are computed, print the top 5 most relevant documents and the bottom 5 least relevant (for your reference)
