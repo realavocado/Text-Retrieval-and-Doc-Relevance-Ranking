@@ -171,7 +171,7 @@ class TextRetrieval():
     # grade (enter your code in this cell - DO NOT DELETE THIS LINE)
     def tfidf_score(self, query, doc, applyBM25_and_IDF=False):
         q = self.text2TFIDF(query)
-        d = self.text2TFIDF(doc, applyBM25_and_IDF=True)
+        d = self.text2TFIDF(doc, applyBM25_and_IDF)
 
         # TODO: compute the relevance using q and d
         relevance = np.dot(q, d)
