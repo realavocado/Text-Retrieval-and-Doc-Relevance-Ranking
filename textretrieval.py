@@ -154,13 +154,15 @@ class TextRetrieval():
     def text2TFIDF(self, text, applyBM25_and_IDF=False):
         ### returns the bit vector representation of the text
         # TODO: Use self.vocab and self.IDF to compute the TF-IDF representation of the text
-        k = 1.5
+        k = 3.5
         tfidfVector = np.zeros(len(self.vocab))
+        # Split the text into words once, outside the loop
+        text_words = text.split()
 
         for i, word in enumerate(self.vocab):
-            if word in text.split():
+            if word in text_words:
                 # TODO: Set the value of TF-IDF to be (temporarily) equal to the word count of word in the text
-                term_freq = text.split().count(word)
+                term_freq = text_words.count(word)
                 tfidfVector[i] = term_freq
                 if applyBM25_and_IDF:
                     # TODO: update the value of the tfidfVector entry to be equal to BM-25 (of the word in the document) multiplied times the IDF of the word
