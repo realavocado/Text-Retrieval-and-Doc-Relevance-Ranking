@@ -191,7 +191,7 @@ class TextRetrieval():
 
         # TODO: Use self.vocab to compute the relevance/ranking score of each document in the dataset using tfidf_score
         for index, row in self.dataset.iterrows():
-            doc = row[2]  # 假定第三列是文档内容
+            doc = row[2]
             relevances[index] = self.tfidf_score(query, doc, True)
 
         return relevances  # in the same order of the documents in the dataset
