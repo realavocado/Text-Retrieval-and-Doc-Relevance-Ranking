@@ -69,7 +69,7 @@ import numpy as np
 import math
 from nltk.corpus import stopwords
 
-class TextRetrieval:
+class DocRelWithVecSpace:
     def __init__(self):
         nltk.download('stopwords')
         self.vocab = np.zeros(200)
@@ -109,22 +109,22 @@ class TextRetrieval:
 
 # Testing code
 if __name__ == "__main__":
-    retrieval = TextRetrieval()
+    test_case = DocRelWithVecSpace()
 
     # Sample dataset and vocabulary
-    retrieval.dataset = [["title1", "category1", "olympic gold medal"],
-                        ["title2", "category2", "stocks market prices rise"],
-                        ["title3", "category3", "investment in gold market"],
-                        ["title4", "category4", "market friday stocks"],
-                        ["title5", "category5", "gold medal in athens"]]
+    test_case.dataset = [["title1", "category1", "olympic gold medal"],
+                         ["title2", "category2", "stocks market prices rise"],
+                         ["title3", "category3", "investment in gold market"],
+                         ["title4", "category4", "market friday stocks"],
+                         ["title5", "category5", "gold medal in athens"]]
 
     # Set a sample vocabulary and compute IDF for it
-    retrieval.vocab = np.array(["olympic", "gold", "athens", "stocks", "market", "friday", "investment", "prices", "medal"])
-    retrieval.compute_IDF(len(retrieval.dataset), [doc[2] for doc in retrieval.dataset])
+    test_case.vocab = np.array(["olympic", "gold", "athens", "stocks", "market", "friday", "investment", "prices", "medal"])
+    test_case.compute_IDF(len(test_case.dataset), [doc[2] for doc in test_case.dataset])
 
     # Query test with document length normalization and BM25 enabled
     query = "olympic gold athens"
     print("TF-IDF with BM25 and length normalization for query:", query)
-    for doc in retrieval.dataset:
-        score = retrieval.text2TFIDF(doc[2], applyBM25_and_IDF=True)
-        print(f"Document: {doc[2]}, Score: {np.dot(score, retrieval.text2TFIDF(query, applyBM25_and_IDF=True))}")
+    for doc in test_case.dataset:
+        score = test_case.text2TFIDF(doc[2], applyBM25_and_IDF=True)
+        print(f"Document: {doc[2]}, Score: {np.dot(score, test_case.text2TFIDF(query, applyBM25_and_IDF=True))}")
