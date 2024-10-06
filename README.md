@@ -7,6 +7,11 @@ This project implements various text retrieval and relevance ranking models for 
 1. **Part I** focuses on parsing text data, building vocabulary, and ranking documents based on different models such as Bit Vector and TF-IDF.
 2. **Part II** introduces more advanced techniques using Word2Vec for document relevance.
 
+### Vector Space Model
+![Vector Space Model](./images/vector_space_model.png)
+### Word2Vec Model
+![Word2Vec Model](./images/word2vec.png)
+
 The project is implemented in two Python files:
 - `textretrieval.py`: Contains implementations for Tasks 1-3 (Text Parsing, Bit Vector Model, TF-IDF Model).
 - `Word2Vec-TFDF.py`: Contains implementations for Task 4 (Word2Vec) and Task 5 (extra credit).
