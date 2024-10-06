@@ -38,25 +38,25 @@ pip install -r requirements.txt
 
 ### Part I: Text Parsing and Vector Space Models (`textretrieval.py`)
 
-1. **Task 1: Text Data Parsing and Vocabulary Selection (15 points)**
+1. **Task 1: Text Data Parsing and Vocabulary Selection**
    - Cleans and preprocesses the dataset by removing stop-words, punctuation, numbers, HTML tags, and excess whitespaces.
    - Builds a vocabulary of the top 200 most frequent words from the dataset.
 
-2. **Task 2: Document Relevance with Bit Vector Model (25 points)**
+2. **Task 2: Document Relevance with Bit Vector Model**
    - Implements a basic Vector Space Model (VSM) using a bit-vector representation.
    - Computes relevance scores for documents based on the query.
    
-3. **Task 3: Document Relevance with TF-IDF Model (40 points)**
+3. **Task 3: Document Relevance with TF-IDF Model**
    - Implements the TF-IDF model using Okapi-BM25 (without document length normalization).
    - Ranks documents based on the relevance to the provided queries.
 
 ### Part II: Word2Vec Model (`Word2Vec-TFDF.py`)
 
-4. **Task 4: Document Relevance with Word2Vec (20 points)**
+4. **Task 4: Document Relevance with Word2Vec**
    - Uses Word2Vec to compute word relevance based on pre-trained word embeddings.
    - Scores documents using the average log-likelihood of Word2Vec embeddings.
    
-5. **Task 5 (Extra Credit): TF-IDF with Document Length Normalization (15 points)**
+5. **Task 5 (Extra Credit): TF-IDF with Document Length Normalization**
    - Extends the TF-IDF model from Task 3 by adding document length normalization.
 
 ---
@@ -104,6 +104,3 @@ For each model, the output includes:
 
 For any questions regarding the implementation, feel free to contact Letian Jiang.
 
----
-
-This README provides an overview of your project, including its structure, implementation details, and how to run the scripts. Let me know if you need further customization!
