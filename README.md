@@ -15,7 +15,7 @@ The project is implemented in two Python files:
 
 ## Dataset
 
-The dataset used for this project is AG's News Topic Classification Dataset, specifically the `test.csv` file from [this repository](https://raw.githubusercontent.com/mhjabreel/CharCnn_Keras/master/data/ag_news_csv/test.csv). The dataset contains news articles, each with a title, description, and class. For this project, we focus on the "description" field.
+The dataset used for this project is AG's News Topic Classification Dataset, specifically the `test.csv` file from [this link](https://raw.githubusercontent.com/mhjabreel/CharCnn_Keras/master/data/ag_news_csv/test.csv). The dataset contains news articles, each with a title, description, and class. For this project, we focus on the "description" field.
 
 ---
 
