@@ -50,7 +50,7 @@ pip install -r requirements.txt
    - Implements the TF-IDF model using Okapi-BM25 (without document length normalization).
    - Ranks documents based on the relevance to the provided queries.
 
-### Part II: Word2Vec Model (`HW1-letianj2.py`)
+### Part II: Word2Vec Model (`Word2Vec-TFDF.py`)
 
 4. **Task 4: Document Relevance with Word2Vec (20 points)**
    - Uses Word2Vec to compute word relevance based on pre-trained word embeddings.
@@ -70,7 +70,7 @@ To execute the text parsing and relevance models:
    python textretrieval.py
    ```
 
-2. **Run `HW1-letianj2.py`** for Tasks 4-5:
+2. **Run `Word2Vec-TFDF.py`** for Tasks 4-5:
    ```bash
    python Word2Vec-TFDF.py
    ```
